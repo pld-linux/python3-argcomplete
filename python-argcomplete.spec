@@ -13,31 +13,30 @@ Version:	1.9.3
 Release:	1
 License:	Apache v2.0
 Group:		Libraries/Python
-URL:		https://github.com/kislyuk/argcomplete
-Source0:	%{url}/archive/v%{version}/%{pypi_name}-%{version}.tar.gz
+Source0:	https://github.com/kislyuk/argcomplete/archive/v%{version}/%{pypi_name}-%{version}.tar.gz
 # Source0-md5:	18afda95a2726eb24df810645bef4b38
+URL:		https://github.com/kislyuk/argcomplete
 BuildRequires:	rpm-pythonprov
 BuildRequires:	rpmbuild(macros) >= 1.714
 %if %{with check}
 BuildRequires:	tcsh
 %endif
 BuildArch:	noarch
+BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
-%global _description \
-Argcomplete provides easy, extensible command line tab completion of\
-arguments for your Python script.\
-\
-It makes two assumptions:	\
-\
- * You are using bash as your shell\
- * You are using argparse to manage your command line arguments/options\
-\
-Argcomplete is particularly useful if your program has lots of\
-options or subparsers, and if your program can dynamically suggest\
-completions for your argument/option values (for example, if the user\
-is browsing resources over the network).
+%description
+Argcomplete provides easy, extensible command line tab completion of
+arguments for your Python script.
 
-%description %{_description}
+It makes two assumptions:
+
+ - You are using bash as your shell
+ - You are using argparse to manage your command line arguments/options
+
+Argcomplete is particularly useful if your program has lots of options
+or subparsers, and if your program can dynamically suggest completions
+for your argument/option values (for example, if the user is browsing
+resources over the network).
 
 %package -n python3-%{pypi_name}
 Summary:	%{summary}
@@ -50,8 +49,19 @@ BuildRequires:	python3-pexpect
 # pkg_resources module is used from python-argcomplete-check-easy-install-script
 Requires:	python3-setuptools
 
-%description -n python3-%{pypi_name} %{_description}
-Python 3 version.
+%description -n python3-%{pypi_name}
+Argcomplete provides easy, extensible command line tab completion of
+arguments for your Python script.
+
+It makes two assumptions:
+
+ - You are using bash as your shell
+ - You are using argparse to manage your command line arguments/options
+
+Argcomplete is particularly useful if your program has lots of options
+or subparsers, and if your program can dynamically suggest completions
+for your argument/option values (for example, if the user is browsing
+resources over the network).
 
 %prep
 %setup -q -n %{pypi_name}-%{version}
