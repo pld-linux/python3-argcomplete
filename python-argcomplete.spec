@@ -18,8 +18,16 @@ Source0:	https://github.com/kislyuk/argcomplete/archive/v%{version}/%{pypi_name}
 URL:		https://github.com/kislyuk/argcomplete
 BuildRequires:	rpm-pythonprov
 BuildRequires:	rpmbuild(macros) >= 1.714
-%if %{with check}
+%if %{with python3}
+BuildRequires:	python3-devel
+BuildRequires:	python3-setuptools
+%endif
+%if %{with tests}
+BuildRequires:	bash
 BuildRequires:	tcsh
+%if %{with python3}
+BuildRequires:	python3-pexpect
+%endif
 %endif
 BuildArch:	noarch
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -41,11 +49,6 @@ resources over the network).
 %package -n python3-%{pypi_name}
 Summary:	%{summary}
 Group:		Libraries/Python
-BuildRequires:	python3-devel
-BuildRequires:	python3-setuptools
-%if %{with check}
-BuildRequires:	python3-pexpect
-%endif
 # pkg_resources module is used from python-argcomplete-check-easy-install-script
 Requires:	python3-setuptools
 
