@@ -10,7 +10,7 @@
 Summary:	Bash tab completion for argparse
 Name:		python-%{pypi_name}
 Version:	1.9.3
-Release:	2
+Release:	3
 License:	Apache v2.0
 Group:		Libraries/Python
 Source0:	https://github.com/kislyuk/argcomplete/archive/v%{version}/%{pypi_name}-%{version}.tar.gz
@@ -90,6 +90,7 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %if %{with python3}
+%{__rm} -r $RPM_BUILD_ROOT/%{_bindir}
 %py3_install
 %endif
 
@@ -104,6 +105,12 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(644,root,root,755)
 %doc README.rst LICENSE.rst
+%if %{without python3}
+%attr(755,root,root) %{_bindir}/activate-global-python-argcomplete
+%attr(755,root,root) %{_bindir}/python-argcomplete-check-easy-install-script
+%attr(755,root,root) %{_bindir}/python-argcomplete-tcsh
+%attr(755,root,root) %{_bindir}/register-python-argcomplete
+%endif
 %{py_sitescriptdir}/%{module}
 %{py_sitescriptdir}/%{egg_name}-%{version}-py*.egg-info
 %endif
