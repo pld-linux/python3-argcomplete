@@ -1,5 +1,6 @@
 #
 # Conditional build:
+%bcond_without	doc	# Sphinx documentation
 %bcond_with	tests	# unit tests
 %bcond_without	python2 # CPython 2.x module
 %bcond_without	python3 # CPython 3.x module
@@ -18,6 +19,9 @@ Group:		Libraries/Python
 Source0:	https://github.com/kislyuk/argcomplete/archive/v%{version}/%{pypi_name}-%{version}.tar.gz
 # Source0-md5:	603117954aad0f5c94197fc283edc605
 URL:		https://github.com/kislyuk/argcomplete
+%if %(locale -a | grep -q '^C\.utf8$'; echo $?)
+BuildRequires:	glibc-localedb-all
+%endif
 %if %{with python2}
 BuildRequires:	python-devel >= 1:2.7
 BuildRequires:	python-setuptools
@@ -40,8 +44,14 @@ BuildRequires:	python3-pexpect
 %endif
 BuildRequires:	rpm-pythonprov
 BuildRequires:	rpmbuild(macros) >= 1.714
+%if %{with doc}
+BuildRequires:	python3-guzzle_sphinx_theme
+BuildRequires:	sphinx-pdg-3
+%endif
 %if %{with tests}
 BuildRequires:	bash
+BuildRequires:	fish
+BuildRequires:	pip
 BuildRequires:	tcsh
 %endif
 %if %{without python3}
@@ -130,14 +140,21 @@ argparse.
 %prep
 %setup -q -n %{pypi_name}-%{version}
 
-# Remove useless BRs
-#sed -i -r -e '/tests_require = /s/"(coverage|flake8|wheel)"[, ]*//g' setup.py
+%package apidocs
+Summary:	API documentation for Python argcomplete module
+Summary(pl.UTF-8):	Dokumentacja API modułu Pythona argcomplete
+Group:		Documentation
+
+%description apidocs
+API documentation for Python argcomplete module.
+
+%description apidocs -l pl.UTF-8
+Dokumentacja API modułu Pythona argcomplete.
 
 %build
 export LC_ALL=C.UTF-8
 %if %{with python2}
 %py_build
-# %{?with_tests:test}
 
 %if %{with tests}
 %{__python} test/test.py
@@ -146,11 +163,14 @@ export LC_ALL=C.UTF-8
 
 %if %{with python3}
 %py3_build
-# %{?with_tests:test}
 
 %if %{with tests}
 %{__python3} test/test.py
 %endif
+%endif
+
+%if %{with doc}
+sphinx-build-3 -b html docs docs/_build/html
 %endif
 
 %install
@@ -201,3 +221,9 @@ rm -rf $RPM_BUILD_ROOT
 %files -n bash-completion-python-argcomplete
 %defattr(644,root,root,755)
 %{bash_compdir}/python-argcomplete
+
+%if %{with doc}
+%files apidocs
+%defattr(644,root,root,755)
+%doc docs/_build/html/{_static,*.html,*.js}
+%endif
