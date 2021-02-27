@@ -12,7 +12,7 @@ Summary:	Bash tab completion for argparse
 Summary(pl.UTF-8):	Bashowe dopełnianie parametrów dla argparse
 Name:		python-%{pypi_name}
 Version:	1.11.1
-Release:	1
+Release:	2
 License:	Apache v2.0
 Group:		Libraries/Python
 #Source0Download: https://github.com/kislyuk/argcomplete/releases
