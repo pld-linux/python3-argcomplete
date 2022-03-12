@@ -11,13 +11,14 @@
 Summary:	Bash tab completion for argparse
 Summary(pl.UTF-8):	Bashowe dopełnianie parametrów dla argparse
 Name:		python-%{pypi_name}
-Version:	1.11.1
-Release:	2
+# keep 1.12.x here for python2 support
+Version:	1.12.3
+Release:	1
 License:	Apache v2.0
 Group:		Libraries/Python
 #Source0Download: https://github.com/kislyuk/argcomplete/releases
 Source0:	https://github.com/kislyuk/argcomplete/archive/v%{version}/%{pypi_name}-%{version}.tar.gz
-# Source0-md5:	603117954aad0f5c94197fc283edc605
+# Source0-md5:	de46337e0189224a6efd46569526bad8
 URL:		https://github.com/kislyuk/argcomplete
 %if %(locale -a | grep -q '^C\.utf8$'; echo $?)
 BuildRequires:	glibc-localedb-all
@@ -27,7 +28,7 @@ BuildRequires:	python-devel >= 1:2.7
 BuildRequires:	python-setuptools
 %if %{with tests}
 BuildRequires:	python-importlib_metadata >= 0.23
-BuildRequires:	python-importlib_metadata < 2
+BuildRequires:	python-importlib_metadata < 5
 BuildRequires:	python-pexpect
 %endif
 %endif
@@ -37,7 +38,7 @@ BuildRequires:	python3-setuptools
 %if %{with tests}
 %if "%{py3_ver}" < "3.8"
 BuildRequires:	python3-importlib_metadata >= 0.23
-BuildRequires:	python3-importlib_metadata < 2
+BuildRequires:	python3-importlib_metadata < 5
 %endif
 BuildRequires:	python3-pexpect
 %endif
