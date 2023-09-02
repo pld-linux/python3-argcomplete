@@ -8,7 +8,7 @@ Summary:	Bash tab completion for argparse
 Summary(pl.UTF-8):	Bashowe dopełnianie parametrów dla argparse
 Name:		python3-%{module}
 Version:	2.0.0
-Release:	3
+Release:	4
 License:	Apache v2.0
 Group:		Libraries/Python
 #Source0Download: https://github.com/kislyuk/argcomplete/releases
@@ -40,7 +40,7 @@ BuildRequires:	pip
 BuildRequires:	tcsh
 %endif
 # pkg_resources module is used from python-argcomplete-check-easy-install-script
-Requires:	python-setuptools
+Requires:	python3-setuptools
 BuildArch:	noarch
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
