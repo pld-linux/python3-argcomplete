@@ -8,7 +8,7 @@ Summary:	Bash tab completion for argparse
 Summary(pl.UTF-8):	Bashowe dopełnianie parametrów dla argparse
 Name:		python3-%{module}
 Version:	2.0.0
-Release:	5
+Release:	6
 License:	Apache v2.0
 Group:		Libraries/Python
 #Source0Download: https://github.com/kislyuk/argcomplete/releases
