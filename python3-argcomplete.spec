@@ -7,13 +7,13 @@
 Summary:	Bash tab completion for argparse
 Summary(pl.UTF-8):	Bashowe dopełnianie parametrów dla argparse
 Name:		python3-%{module}
-Version:	2.0.0
-Release:	6
+Version:	2.1.2
+Release:	1
 License:	Apache v2.0
 Group:		Libraries/Python
 #Source0Download: https://github.com/kislyuk/argcomplete/releases
 Source0:	https://github.com/kislyuk/argcomplete/archive/v%{version}/%{module}-%{version}.tar.gz
-# Source0-md5:	57d492ebd86eaa4f24c1c041252b1118
+# Source0-md5:	455a332fdbb651d9715e4d6f7576d11e
 URL:		https://github.com/kislyuk/argcomplete
 %if %(locale -a | grep -q '^C\.utf8$'; echo $?)
 BuildRequires:	glibc-localedb-all
@@ -21,9 +21,9 @@ BuildRequires:	glibc-localedb-all
 BuildRequires:	python3-devel >= 1:3.6
 BuildRequires:	python3-setuptools
 %if %{with tests}
-%if "%{py3_ver}" < "3.8"
+%if "%{py3_ver}" == "3.6" || "%{py3_ver}" == "3.7"
 BuildRequires:	python3-importlib_metadata >= 0.23
-BuildRequires:	python3-importlib_metadata < 5
+BuildRequires:	python3-importlib_metadata < 6
 %endif
 BuildRequires:	python3-pexpect
 %endif
@@ -37,7 +37,6 @@ BuildRequires:	sphinx-pdg-3
 BuildRequires:	bash
 BuildRequires:	fish
 BuildRequires:	pip
-BuildRequires:	tcsh
 %endif
 # pkg_resources module is used from python-argcomplete-check-easy-install-script
 Requires:	python3-setuptools
@@ -86,9 +85,6 @@ Bash completion for argparse based Python scripts.
 Bashowe dopełnianie parametrów dla skryptów Pythona opartych na
 argparse.
 
-%prep
-%setup -q -n %{module}-%{version}
-
 %package apidocs
 Summary:	API documentation for Python argcomplete module
 Summary(pl.UTF-8):	Dokumentacja API modułu Pythona argcomplete
@@ -100,6 +96,9 @@ API documentation for Python argcomplete module.
 %description apidocs -l pl.UTF-8
 Dokumentacja API modułu Pythona argcomplete.
 
+%prep
+%setup -q -n %{module}-%{version}
+
 %build
 %py3_build
 
@@ -108,6 +107,7 @@ Dokumentacja API modułu Pythona argcomplete.
 %endif
 
 %if %{with doc}
+PYTHONPATH=$(pwd) \
 sphinx-build-3 -b html docs docs/_build/html
 %endif
 
@@ -127,7 +127,6 @@ rm -rf $RPM_BUILD_ROOT
 %doc Authors.rst Changes.rst README.rst
 %attr(755,root,root) %{_bindir}/activate-global-python-argcomplete
 %attr(755,root,root) %{_bindir}/python-argcomplete-check-easy-install-script
-%attr(755,root,root) %{_bindir}/python-argcomplete-tcsh
 %attr(755,root,root) %{_bindir}/register-python-argcomplete
 %{py3_sitescriptdir}/argcomplete
 %{py3_sitescriptdir}/argcomplete-%{version}-py*.egg-info
