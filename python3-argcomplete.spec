@@ -7,30 +7,31 @@
 Summary:	Bash tab completion for argparse
 Summary(pl.UTF-8):	Bashowe dopełnianie parametrów dla argparse
 Name:		python3-%{module}
-Version:	2.1.2
-Release:	2
+Version:	3.6.3
+Release:	1
 License:	Apache v2.0
 Group:		Libraries/Python
-#Source0Download: https://github.com/kislyuk/argcomplete/releases
-Source0:	https://github.com/kislyuk/argcomplete/archive/v%{version}/%{module}-%{version}.tar.gz
-# Source0-md5:	455a332fdbb651d9715e4d6f7576d11e
+#Source0Download: https://pypi.org/simple/argcomplete/
+Source0:	https://files.pythonhosted.org/packages/source/a/argcomplete/%{module}-%{version}.tar.gz
+# Source0-md5:	0c612498a4b7b421aa870d47361e2322
 URL:		https://github.com/kislyuk/argcomplete
 %if %(locale -a | grep -q '^C\.utf8$'; echo $?)
 BuildRequires:	glibc-localedb-all
 %endif
-BuildRequires:	python3-devel >= 1:3.6
-BuildRequires:	python3-setuptools
+BuildRequires:	python3-build
+BuildRequires:	python3-devel >= 1:3.8
+BuildRequires:	python3-hatchling
+BuildRequires:	python3-installer
 %if %{with tests}
-%if "%{py3_ver}" == "3.6" || "%{py3_ver}" == "3.7"
-BuildRequires:	python3-importlib_metadata >= 0.23
-BuildRequires:	python3-importlib_metadata < 6
-%endif
 BuildRequires:	python3-pexpect
 %endif
 BuildRequires:	rpm-pythonprov
-BuildRequires:	rpmbuild(macros) >= 1.714
+BuildRequires:	rpmbuild(macros) >= 2.044
+BuildRequires:	sed >= 4.0
 %if %{with doc}
-BuildRequires:	python3-guzzle_sphinx_theme
+BuildRequires:	python3-furo
+BuildRequires:	python3-sphinx_copybutton
+BuildRequires:	python3-sphinxext.opengraph
 BuildRequires:	sphinx-pdg-3
 %endif
 %if %{with tests}
@@ -38,8 +39,8 @@ BuildRequires:	bash
 BuildRequires:	fish
 BuildRequires:	pip
 %endif
-# pkg_resources module is used from python-argcomplete-check-easy-install-script
-Requires:	python3-setuptools
+Requires:	python3-modules >= 1:3.8
+Obsoletes:	bash-completion-python-argcomplete < 3
 BuildArch:	noarch
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -70,21 +71,6 @@ opcji lub podparserów, albo gdy może dynamicznie podpowiadać
 dopełnienia wartości argumentów/opcji (np. kiedy użytkownik przegląda
 zasoby sieciowe).
 
-%package -n bash-completion-python3-argcomplete
-Summary:	Bash completion for argparse
-Summary(pl.UTF-8):	Bashowe dopełnianie parametrów dla argparse
-Group:		Applications/Shells
-Requires:	bash-completion >= 2.0
-Requires:	python3-%{module} = %{version}-%{release}
-Obsoletes:	bash-completion-python-argcomplete < 2
-
-%description -n bash-completion-python3-argcomplete
-Bash completion for argparse based Python scripts.
-
-%description -n bash-completion-python3-argcomplete -l pl.UTF-8
-Bashowe dopełnianie parametrów dla skryptów Pythona opartych na
-argparse.
-
 %package apidocs
 Summary:	API documentation for Python argcomplete module
 Summary(pl.UTF-8):	Dokumentacja API modułu Pythona argcomplete
@@ -99,8 +85,10 @@ Dokumentacja API modułu Pythona argcomplete.
 %prep
 %setup -q -n %{module}-%{version}
 
+%{__sed} -i -e '1s,/usr/bin/env python3,%{__python3},' argcomplete/scripts/{python_argcomplete_check_easy_install_script,register_python_argcomplete}.py
+
 %build
-%py3_build
+%py3_build_pyproject
 
 %if %{with tests}
 %{__python3} test/test.py
@@ -114,29 +102,32 @@ sphinx-build-3 -b html docs docs/_build/html
 %install
 rm -rf $RPM_BUILD_ROOT
 
-%py3_install
+%py3_install_pyproject
 
-install -d $RPM_BUILD_ROOT%{bash_compdir}
-cp -p argcomplete/bash_completion.d/python-argcomplete $RPM_BUILD_ROOT%{bash_compdir}
+install -d $RPM_BUILD_ROOT{%{bash_compdir},%{zsh_compdir}}
+%{__mv} $RPM_BUILD_ROOT%{py3_sitescriptdir}/argcomplete/bash_completion.d/_python-argcomplete $RPM_BUILD_ROOT%{zsh_compdir}
+ln $RPM_BUILD_ROOT%{zsh_compdir}/_python-argcomplete $RPM_BUILD_ROOT%{bash_compdir}/python-argcomplete
+rmdir $RPM_BUILD_ROOT%{py3_sitescriptdir}/argcomplete/bash_completion.d
+
+# script for copying completions to system location
+%{__rm} $RPM_BUILD_ROOT%{py3_sitescriptdir}/argcomplete/scripts/activate_global_python_argcomplete.py
+%{__rm} $RPM_BUILD_ROOT%{_bindir}/activate-global-python-argcomplete
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%doc Authors.rst Changes.rst README.rst
-%attr(755,root,root) %{_bindir}/activate-global-python-argcomplete
+%doc Authors.rst Changes.rst NOTICE README.rst SECURITY.md
 %attr(755,root,root) %{_bindir}/python-argcomplete-check-easy-install-script
 %attr(755,root,root) %{_bindir}/register-python-argcomplete
 %{py3_sitescriptdir}/argcomplete
-%{py3_sitescriptdir}/argcomplete-%{version}-py*.egg-info
-
-%files -n bash-completion-python3-argcomplete
-%defattr(644,root,root,755)
+%{py3_sitescriptdir}/argcomplete-%{version}.dist-info
 %{bash_compdir}/python-argcomplete
+%{zsh_compdir}/_python-argcomplete
 
 %if %{with doc}
 %files apidocs
 %defattr(644,root,root,755)
-%doc docs/_build/html/{_static,*.html,*.js}
+%doc docs/_build/html/{_modules,_static,*.html,*.js}
 %endif
