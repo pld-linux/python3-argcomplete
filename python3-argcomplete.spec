@@ -7,19 +7,19 @@
 Summary:	Bash tab completion for argparse
 Summary(pl.UTF-8):	Bashowe dopełnianie parametrów dla argparse
 Name:		python3-%{module}
-Version:	3.6.3
+Version:	3.7.2
 Release:	1
 License:	Apache v2.0
 Group:		Libraries/Python
 #Source0Download: https://pypi.org/simple/argcomplete/
 Source0:	https://files.pythonhosted.org/packages/source/a/argcomplete/%{module}-%{version}.tar.gz
-# Source0-md5:	0c612498a4b7b421aa870d47361e2322
+# Source0-md5:	b6553ad23016cb210399570522f90223
 URL:		https://github.com/kislyuk/argcomplete
 %if %(locale -a | grep -q '^C\.utf8$'; echo $?)
 BuildRequires:	glibc-localedb-all
 %endif
 BuildRequires:	python3-build
-BuildRequires:	python3-devel >= 1:3.8
+BuildRequires:	python3-devel >= 1:3.10
 BuildRequires:	python3-hatchling
 BuildRequires:	python3-installer
 %if %{with tests}
@@ -39,7 +39,7 @@ BuildRequires:	bash
 BuildRequires:	fish
 BuildRequires:	pip
 %endif
-Requires:	python3-modules >= 1:3.8
+Requires:	python3-modules >= 1:3.10
 Obsoletes:	bash-completion-python-argcomplete < 3
 BuildArch:	noarch
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -85,7 +85,7 @@ Dokumentacja API modułu Pythona argcomplete.
 %prep
 %setup -q -n %{module}-%{version}
 
-%{__sed} -i -e '1s,/usr/bin/env python3,%{__python3},' argcomplete/scripts/{python_argcomplete_check_easy_install_script,register_python_argcomplete}.py
+%{__sed} -i -e '1s,/usr/bin/env python3,%{__python3},' argcomplete/scripts/register_python_argcomplete.py
 
 %build
 %py3_build_pyproject
@@ -119,7 +119,6 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(644,root,root,755)
 %doc Authors.rst Changes.rst NOTICE README.rst SECURITY.md
-%attr(755,root,root) %{_bindir}/python-argcomplete-check-easy-install-script
 %attr(755,root,root) %{_bindir}/register-python-argcomplete
 %{py3_sitescriptdir}/argcomplete
 %{py3_sitescriptdir}/argcomplete-%{version}.dist-info
